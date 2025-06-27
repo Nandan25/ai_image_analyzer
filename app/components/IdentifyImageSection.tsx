@@ -10,6 +10,8 @@ type IdentifyImageSectionProps = {
 export const IdentifyImageSection = ({
   setResult,
 }: IdentifyImageSectionProps) => {
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -29,7 +31,15 @@ export const IdentifyImageSection = ({
     e.preventDefault();
     setDragActive(false);
     const file = e.dataTransfer.files?.[0];
+
     if (file && file.type.startsWith("image/")) {
+      if (file.size > MAX_FILE_SIZE) {
+        setError("File size exceeds 5MB limit.");
+        setSelectedFile(null);
+        setPreviewURL(null);
+        return;
+      }
+      setError(null);
       setSelectedFile(file);
       setPreviewURL(URL.createObjectURL(file));
     }
@@ -37,7 +47,15 @@ export const IdentifyImageSection = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (file && file.type.startsWith("image/")) {
+      if (file.size > MAX_FILE_SIZE) {
+        setError("File size exceeds 5MB limit.");
+        setSelectedFile(null);
+        setPreviewURL(null);
+        return;
+      }
+      setError(null);
       setSelectedFile(file);
       setPreviewURL(URL.createObjectURL(file));
     }
